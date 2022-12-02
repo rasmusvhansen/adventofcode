@@ -1,0 +1,27 @@
+{
+  "compileOnSave": false,
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "importHelpers": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "target": "es2019",
+    "typeRoots": ["node_modules/@types", "src/types"],
+    "lib": ["es2019", "dom"],
+    "types": ["src/array.d.ts"],
+    "module": "commonjs",
+    "baseUrl": "./"
+  }
+}

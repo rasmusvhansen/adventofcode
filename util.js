@@ -1,0 +1,11 @@
+"use strict";
+exports.__esModule = true;
+exports.multiply = exports.sum = exports.times = exports.add = void 0;
+var add = function (a, b) { return a + b; };
+exports.add = add;
+var times = function (a, b) { return a * b; };
+exports.times = times;
+var sum = function (ns) { return ns.reduce(exports.add, 0); };
+exports.sum = sum;
+var multiply = function (ns) { return ns.reduce(exports.times, 1); };
+exports.multiply = multiply;
