@@ -42,10 +42,22 @@ Array.prototype.intersect = function (that) {
   return this.filter((e) => that.includes(e));
 };
 
+Array.prototype.intersect2 = function (arr1, arr2) {
+  return this.filter((e) => arr1.includes(e) && arr2.includes(e));
+};
+
 Array.prototype.union = function (that) {
   return [...new Set([...this, ...that])];
 };
 
 Array.prototype.toNumbers = function () {
   return this.map((x) => +x);
+};
+
+Array.prototype.chunk = function <T>(n: number) {
+  return this.reduce((groups, rucksack, i) => {
+    groups[Math.floor(i / n)] = groups[Math.floor(i / n)] || [];
+    groups[Math.floor(i / n)].push(rucksack);
+    return groups;
+  }, [] as T[][]);
 };
