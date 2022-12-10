@@ -16,4 +16,4 @@ export const toMatrix = <T = number>(input: string, map: (s: string, row: number
   };
 };
 
-const matrixKey = (row: number, col: number) => `${row},${col}`;
+export const matrixKey = (row: number, col: number) => `${row},${col}`;
