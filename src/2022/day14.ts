@@ -1,21 +1,47 @@
 import { bufferCount, filter } from 'rxjs';
 import { transducer } from 'rxjs-transducer';
 import '../array';
-import { range } from '../util';
+import { Point, range } from '../util';
 type Block = 'rock' | 'sand';
 type World = Map<Point, Block>;
+let RENDER_EVERY = 2;
 
-export function run() {
+const slider = document.querySelector('input')!;
+slider.value = RENDER_EVERY.toString();
+slider.addEventListener('change', () => (RENDER_EVERY = +slider.value));
+
+const canvas = document.querySelector('canvas')!;
+const ctx = canvas.getContext('2d')!;
+canvas.width = document.body.clientWidth;
+canvas.height = document.body.clientHeight;
+const SCALE = 4;
+const TRANSLATE_X = -400;
+
+export async function run() {
   const world: World = parse();
   const floorY = [...world].map(([p]) => p.y).max() + 2;
-  while (letSandFall(world, floorY));
+  renderWorld(world, null);
+  await letSandFall(world, floorY);
   console.log('Part 1', [...world].filter(([, block]) => block === 'sand').length);
 
   const world2 = parse();
 
   range(500 - floorY * 2, 500 + floorY * 2).forEach((x) => world2.set(Point.create(x, floorY), 'rock'));
-  while (letSandFall(world2, floorY));
+  await letSandFall(world2, floorY);
   console.log('Part 2', [...world2].filter(([, block]) => block === 'sand').length + 1);
+}
+
+function renderWorld(world: World, currentSand?: Point) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const blocks = [...world];
+  ctx.fillStyle = 'grey';
+  blocks.filter(([, block]) => block === 'rock').forEach(([{ x, y }]) => ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE));
+  ctx.fillStyle = 'yellow';
+  blocks
+    .filter(([, block]) => block === 'sand')
+    .concat([[currentSand!, 'sand']])
+    .filter(([point]) => !!point)
+    .forEach(([{ x, y }]) => ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE));
 }
 
 function parse() {
@@ -45,46 +71,28 @@ function stepSand(sand: Point, world: World): Point {
   return sand;
 }
 
-function letSandFall(world: World, maxY: number): boolean {
-  let i = 0;
-  let sand = sandSpawn;
-  do {
-    const newSand = stepSand(sand, world);
-    if (newSand === sand || newSand.y > maxY) {
-      sand = newSand;
-      break;
-    }
-    sand = newSand;
-    i++;
-  } while (true);
-
-  if (sand.y <= maxY && sand !== sandSpawn) {
-    world.set(sand, 'sand');
-    return true;
+function fallLoop(world: World, maxY: number, sand: Point, resolve: (value: void | PromiseLike<void>) => void, tick: number) {
+  const newSand = stepSand(sand, world);
+  if (newSand === sandSpawn || newSand.y > maxY) {
+    resolve();
   }
-  return false;
+
+  if (newSand === sand) {
+    world.set(newSand, 'sand');
+  }
+  tick = tick + 1;
+  if (tick % RENDER_EVERY === 0) {
+    renderWorld(world, sand);
+    requestAnimationFrame(() => fallLoop(world, maxY, newSand === sand ? sandSpawn : newSand, resolve, tick++));
+  } else {
+    fallLoop(world, maxY, newSand === sand ? sandSpawn : newSand, resolve, tick++);
+  }
 }
 
-class Point {
-  private static cache = new Map<string, Point>();
-  static create(x: number, y: number) {
-    const key = `${x},${y}`;
-    Point.cache.set(key, Point.cache.get(key) || new Point(x, y));
-    return Point.cache.get(key)!;
-  }
-
-  private constructor(public x: number, public y: number) {}
-  below(): Point {
-    return Point.create(this.x, this.y + 1);
-  }
-
-  downLeft(): Point {
-    return Point.create(this.x - 1, this.y + 1);
-  }
-
-  downRight(): Point {
-    return Point.create(this.x + 1, this.y + 1);
-  }
+function letSandFall(world: World, maxY: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    fallLoop(world, maxY, sandSpawn, resolve, 0);
+  });
 }
 
 const sandSpawn = Point.create(500, 0);
@@ -260,3 +268,5 @@ const realInput = `519,81 -> 524,81
 512,66 -> 512,70 -> 505,70 -> 505,78 -> 521,78 -> 521,70 -> 516,70 -> 516,66
 486,37 -> 486,34 -> 486,37 -> 488,37 -> 488,34 -> 488,37 -> 490,37 -> 490,28 -> 490,37 -> 492,37 -> 492,28 -> 492,37 -> 494,37 -> 494,30 -> 494,37 -> 496,37 -> 496,36 -> 496,37 -> 498,37 -> 498,36 -> 498,37
 566,148 -> 571,148`;
+
+run();

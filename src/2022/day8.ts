@@ -65,15 +65,8 @@ function markVisible(it: IterableIterator<Tree>) {
 }
 
 function* traverseRow(trees: Tree[][], index: number, direction: 'right' | 'left', startCol = 0): IterableIterator<Tree> {
-  if (direction === 'right') {
-    for (let i = startCol; i < trees.length; i++) {
-      yield trees[index][i];
-    }
-  } else {
-    for (let i = startCol; i >= 0; i--) {
-      yield trees[index][i];
-    }
-  }
+  const temp = direction === 'left' ? trees[index].slice(0, startCol + 1).reverse() : trees[index].slice(startCol);
+  for (let tree of temp) yield tree;
 }
 
 function* traverseCol(trees: Tree[][], index: number, direction: 'down' | 'up', startRow = 0): IterableIterator<Tree> {

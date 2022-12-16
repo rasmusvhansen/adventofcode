@@ -7,8 +7,8 @@ export function run() {
   const monkeys = realMonkeys;
   const combinedMod = monkeys.reduce((m, monkey) => m * monkey.mod, 1);
   // part 1
-  // range(1, 20).forEach((round) => {
-  range(1, 10000).forEach((round) => {
+  // range(1, 20).forEach(() => {
+  range(1, 10000).forEach(() => {
     monkeys.forEach((m, monkeyIndex) => {
       m.items.forEach((item) => {
         // part 1

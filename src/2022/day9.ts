@@ -14,7 +14,7 @@ export function run() {
     tail = next(head, tail);
     visited[matrixKey(tail[0], tail[1])] = (visited[matrixKey(tail[0], tail[1])] || 0) + 1;
   });
-  console.log('Part 1:', Object.keys(visited).length, range(1, 9));
+  console.log('Part 1:', Object.keys(visited).length);
 
   part2();
 }

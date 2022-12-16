@@ -1,27 +1,19 @@
 {
-  "compileOnSave": false,
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
-    "downlevelIteration": true,
+    "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "importHelpers": true,
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "target": "es2019",
-    "typeRoots": ["node_modules/@types", "src/types"],
-    "lib": ["es2019", "dom"],
-    "types": ["src/array.d.ts"],
-    "module": "commonjs",
-    "baseUrl": "./"
-  }
+    "noImplicitReturns": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"]
 }
