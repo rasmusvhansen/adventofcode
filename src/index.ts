@@ -1,3 +1,3 @@
-import { run } from './2023/d03.js';
+import { run } from './2023/d08.js';
 
 run();
