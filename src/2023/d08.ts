@@ -22,11 +22,11 @@ export function run() {
 
   let startElements = rules.filter(({ element }) => element.endsWith('A'));
   const part2 = startElements.map((e) => travelFromAToZ(e, rules, directions));
-  console.log(part2.reduce(lcd)); // use LCD on 1/x to find place where they all end at Z
+  console.log(part2.reduce(lcm)); // use LCM to find place where they all end at Z
 }
 
 const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b);
-const lcd = (a: number, b: number) => (a * b) / gcd(a, b);
+const lcm = (a: number, b: number) => (a * b) / gcd(a, b);
 
 function travelFromAToZ(start: Rule, rules: Rule[], directions: Array<'L' | 'R'>): number {
   let currentElement = start;
