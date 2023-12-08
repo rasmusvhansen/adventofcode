@@ -12,9 +12,6 @@ export function run() {
     })
     .filter((arr) => arr.length !== 0);
 
-  console.log(numbers.map((n) => n.number).length);
-  console.log(numbers.map((n) => n.number).uniq().length);
-
   const matrix = realInput.split('\n').map((l) => l.split(''));
 
   const partNumbers = new Set<MachinePart>();
@@ -32,9 +29,8 @@ export function run() {
       }
     }
   }
-  console.log([...partNumbers].sort((a, b) => a.y * 1000 - b.y * 1000 + (a.x - b.x)));
-  console.log([...partNumbers].map((p) => p.number).sum());
-  console.log('gears', gearRatios.sum());
+  console.log('Sum of parts: ', [...partNumbers].map((p) => p.number).sum());
+  console.log('Sum of gear ratios:, ', gearRatios.sum());
 }
 
 const isAdjacent = ([x, y]: [number, number], partNumber: { x: number; y: number; length: number }) => {
