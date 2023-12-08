@@ -1,9 +1,9 @@
-import '../array';
+import "../array.js";
 
 export function run() {
   const foodByElf = input()
-    .split('\n\n')
-    .map((group) => group.split('\n').toNumbers().sum())
+    .split("\n\n")
+    .map((group) => group.split("\n").toNumbers().sum())
     .sortDesc()
     .slice(0, 3);
 

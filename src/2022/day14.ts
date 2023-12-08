@@ -1,17 +1,17 @@
-import { bufferCount, filter } from 'rxjs';
-import { transducer } from 'rxjs-transducer';
-import '../array';
-import { Point, range } from '../util';
-type Block = 'rock' | 'sand';
+import { bufferCount, filter } from "rxjs";
+import { transducer } from "rxjs-transducer";
+import "../array.js";
+import { Point, range } from "../util.js";
+type Block = "rock" | "sand";
 type World = Map<Point, Block>;
 let RENDER_EVERY = 2;
 
-const slider = document.querySelector('input')!;
+const slider = document.querySelector("input")!;
 slider.value = RENDER_EVERY.toString();
-slider.addEventListener('change', () => (RENDER_EVERY = +slider.value));
+slider.addEventListener("change", () => (RENDER_EVERY = +slider.value));
 
-const canvas = document.querySelector('canvas')!;
-const ctx = canvas.getContext('2d')!;
+const canvas = document.querySelector("canvas")!;
+const ctx = canvas.getContext("2d")!;
 canvas.width = document.body.clientWidth;
 canvas.height = document.body.clientHeight;
 const SCALE = 4;
@@ -20,33 +20,53 @@ const TRANSLATE_X = -400;
 export async function run() {
   const world: World = parse();
   const floorY = [...world].map(([p]) => p.y).max() + 2;
-  renderWorld(world, null);
+  renderWorld(world, undefined);
   await letSandFall(world, floorY);
-  console.log('Part 1', [...world].filter(([, block]) => block === 'sand').length);
+  console.log(
+    "Part 1",
+    [...world].filter(([, block]) => block === "sand").length
+  );
 
   const world2 = parse();
 
-  range(500 - floorY * 2, 500 + floorY * 2).forEach((x) => world2.set(Point.create(x, floorY), 'rock'));
+  range(500 - floorY * 2, 500 + floorY * 2).forEach((x) =>
+    world2.set(Point.create(x, floorY), "rock")
+  );
   await letSandFall(world2, floorY);
-  console.log('Part 2', [...world2].filter(([, block]) => block === 'sand').length + 1);
+  console.log(
+    "Part 2",
+    [...world2].filter(([, block]) => block === "sand").length + 1
+  );
 }
 
 function renderWorld(world: World, currentSand?: Point) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const blocks = [...world];
-  ctx.fillStyle = 'grey';
-  blocks.filter(([, block]) => block === 'rock').forEach(([{ x, y }]) => ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE));
-  ctx.fillStyle = 'yellow';
+  ctx.fillStyle = "grey";
   blocks
-    .filter(([, block]) => block === 'sand')
-    .concat([[currentSand!, 'sand']])
+    .filter(([, block]) => block === "rock")
+    .forEach(([{ x, y }]) =>
+      ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE)
+    );
+  ctx.fillStyle = "yellow";
+  blocks
+    .filter(([, block]) => block === "sand")
+    .concat([[currentSand!, "sand"]])
     .filter(([point]) => !!point)
-    .forEach(([{ x, y }]) => ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE));
+    .forEach(([{ x, y }]) =>
+      ctx.fillRect((x + TRANSLATE_X) * SCALE, y * SCALE, SCALE, SCALE)
+    );
 }
 
 function parse() {
   const world: World = new Map();
-  const lines = realInput.split('\n').map((lines) => lines.split(' -> ').map((s) => s.split(',').map((n) => +n) as [number, number]));
+  const lines = realInput
+    .split("\n")
+    .map((lines) =>
+      lines
+        .split(" -> ")
+        .map((s) => s.split(",").map((n) => +n) as [number, number])
+    );
   lines.forEach((line) => {
     transducer(line)(
       bufferCount(2, 1),
@@ -57,7 +77,7 @@ function parse() {
       const end = varyX ? endX : endY;
       range(Math.min(start, end), Math.max(start, end)).forEach((n) => {
         const point = Point.create(varyX ? n : startX, varyX ? startY : n);
-        world.set(point, 'rock');
+        world.set(point, "rock");
       });
     });
   });
@@ -71,21 +91,41 @@ function stepSand(sand: Point, world: World): Point {
   return sand;
 }
 
-function fallLoop(world: World, maxY: number, sand: Point, resolve: (value: void | PromiseLike<void>) => void, tick: number) {
+function fallLoop(
+  world: World,
+  maxY: number,
+  sand: Point,
+  resolve: (value: void | PromiseLike<void>) => void,
+  tick: number
+) {
   const newSand = stepSand(sand, world);
   if (newSand === sandSpawn || newSand.y > maxY) {
     resolve();
   }
 
   if (newSand === sand) {
-    world.set(newSand, 'sand');
+    world.set(newSand, "sand");
   }
   tick = tick + 1;
   if (tick % RENDER_EVERY === 0) {
     renderWorld(world, sand);
-    requestAnimationFrame(() => fallLoop(world, maxY, newSand === sand ? sandSpawn : newSand, resolve, tick++));
+    requestAnimationFrame(() =>
+      fallLoop(
+        world,
+        maxY,
+        newSand === sand ? sandSpawn : newSand,
+        resolve,
+        tick++
+      )
+    );
   } else {
-    fallLoop(world, maxY, newSand === sand ? sandSpawn : newSand, resolve, tick++);
+    fallLoop(
+      world,
+      maxY,
+      newSand === sand ? sandSpawn : newSand,
+      resolve,
+      tick++
+    );
   }
 }
 

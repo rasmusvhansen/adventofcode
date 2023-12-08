@@ -10,7 +10,7 @@ declare global {
     sortDesc(): T[];
     sortAsc(): T[];
     uniq(field?: keyof T): T[];
-    pluck(field: keyof T): T[field][];
+    pluck(field: keyof T): T[typeof field][];
     except(that: T[]): T[];
     intersect(that: T[]): T[];
     intersect2(arr1: T[], arr2: T[]): T[];
