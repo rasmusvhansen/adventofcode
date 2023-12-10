@@ -33,8 +33,20 @@ export class Point {
   }
 
   private constructor(public x: number, public y: number) {}
+  above(): Point {
+    return Point.create(this.x, this.y - 1);
+  }
+
   below(): Point {
     return Point.create(this.x, this.y + 1);
+  }
+
+  left(): Point {
+    return Point.create(this.x - 1, this.y);
+  }
+
+  right(): Point {
+    return Point.create(this.x + 1, this.y);
   }
 
   downLeft(): Point {
@@ -117,4 +129,24 @@ export function checkIntersection(x1: number, y1: number, x2: number, y2: number
   }
 
   return null;
+}
+
+export type Coord = [number, number];
+export function pointInPoly(polygon: Coord[], [y, x]: Coord) {
+  const [vertx, verty] = polygon.reduce(
+    (xys, [y, x]) => {
+      xys[0].push(x);
+      xys[1].push(y);
+      return xys;
+    },
+    [[], []] as [number[], number[]]
+  );
+  const nvert = vertx.length;
+  let c = false;
+
+  let j = nvert - 1;
+  for (let i = 0; i < nvert; j = i++) {
+    if (verty[i] > y != verty[j] > y && x < ((vertx[j] - vertx[i]) * (y - verty[i])) / (verty[j] - verty[i]) + vertx[i]) c = !c;
+  }
+  return c;
 }
