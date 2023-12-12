@@ -150,3 +150,18 @@ export function pointInPoly(polygon: Coord[], [y, x]: Coord) {
   }
   return c;
 }
+
+export function memoize<F extends Function>(func: F): F {
+  const cache: Record<string, any> = {};
+
+  return function memoizeFunction(this: any, ...args: any[]) {
+    const key = JSON.stringify(args);
+
+    if (cache[key] === undefined) {
+      const result = func.apply(this, args);
+      cache[key] = result;
+    }
+
+    return cache[key];
+  } as unknown as F;
+}
