@@ -165,3 +165,14 @@ export function memoize<F extends Function>(func: F): F {
     return cache[key];
   } as unknown as F;
 }
+
+export function* rotateIterator<T>(input: T[][]): IterableIterator<T[]> {
+  for (let i = 0; i < input[0].length; i++) {
+    const rotated = input.map((x) => x[i]);
+    yield rotated;
+  }
+}
+
+export function pairWise<T>(a: T[]): [T, T][] {
+  return a.flatMap((g, i) => a.slice(i + 1).map((other) => [g, other] as [T, T]));
+}
