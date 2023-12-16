@@ -1,5 +1,4 @@
-import '../array.js';
-import { multiply } from '../util';
+import 'array';
 
 export function run() {
   console.log('Day 3');

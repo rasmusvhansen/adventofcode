@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 
 export function run() {
   console.log('Day 9');

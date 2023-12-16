@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 import { Point, pointInPoly, toMatrix } from '../util.js';
 
 export function run() {

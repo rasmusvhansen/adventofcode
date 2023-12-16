@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["bun-types", "node"],
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -10,9 +11,14 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "noEmit": true,
+    "baseUrl": "src",
 
     "skipLibCheck": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+    "paths": {
+      "@util": ["./util.ts"], // map specifier to file
+      "components/*": ["components/*"] // wildcard matching
+    }
   },
   "include": ["src"]
 }

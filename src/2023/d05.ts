@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 import { range } from '../util.js';
 
 export function run() {

@@ -4,9 +4,13 @@ export const sum = (ns: number[]) => ns.reduce(add, 0);
 export const multiply = (ns: number[]) => ns.reduce(times, 1);
 export const range = (start: number, end: number, endInclusive = true) =>
   Array.from({ length: end - start + (endInclusive ? 1 : 0) }).map((_, i) => i + start);
-export const toMatrix = <T = number>(input: string, map: (s: string, row: number, col: number) => T = (s) => +s as T) => {
+export const toMatrix = <T = number>(
+  input: string,
+  map: (s: string, row: number, col: number) => T = (s) => +s as T
+) => {
   const matrix = new Map<string, T>();
-  input.split('\n').map((s, row) => s.split('').map((n, col) => matrix.set(matrixKey(row, col), map(n, row, col))));
+  const rows = input.split('\n');
+  rows.map((s, row) => s.split('').map((n, col) => matrix.set(matrixKey(row, col), map(n, row, col))));
   return {
     get: (row: number, col: number) => matrix.get(matrixKey(row, col)),
     has: (row: number, col: number) => matrix.has(matrixKey(row, col)),
@@ -17,6 +21,8 @@ export const toMatrix = <T = number>(input: string, map: (s: string, row: number
     get size() {
       return matrix.size;
     },
+    height: rows.length,
+    width: rows[0].length,
   };
 };
 
@@ -24,6 +30,9 @@ export const matrixKey = (row: number, col: number) => `${row},${col}`;
 export const fromMatrixKey = (key: string) => key.split(',').map((s) => +s) as [number, number];
 export type Rectangle = [Point, Point, Point, Point];
 
+export type Direction = 'N' | 'S' | 'E' | 'W';
+const xTransform: Record<Direction, -1 | 0 | 1> = { N: 0, S: 0, W: -1, E: 1 };
+const yTransform: Record<Direction, -1 | 0 | 1> = { N: -1, S: 1, W: 0, E: 0 };
 export class Point {
   private static cache = new Map<string, Point>();
   static create(x: number, y: number) {
@@ -33,6 +42,9 @@ export class Point {
   }
 
   private constructor(public x: number, public y: number) {}
+  go(direction: Direction) {
+    return Point.create(this.x + xTransform[direction], this.y + yTransform[direction]);
+  }
   above(): Point {
     return Point.create(this.x, this.y - 1);
   }
@@ -92,7 +104,10 @@ export class Point {
   }
 
   rotateBack(): Point {
-    return Point.create(Math.round(this.x / Math.SQRT2 + this.y / Math.SQRT2), Math.round(-this.x / Math.SQRT2 + this.y / Math.SQRT2));
+    return Point.create(
+      Math.round(this.x / Math.SQRT2 + this.y / Math.SQRT2),
+      Math.round(-this.x / Math.SQRT2 + this.y / Math.SQRT2)
+    );
   }
 
   isContainedIn([ll, _ul, ur, _lr]: Rectangle): boolean {
@@ -109,7 +124,16 @@ export function manhattanDistance({ x: x1, y: y1 }: Point, { x: x2, y: y2 }: Poi
   return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 }
 
-export function checkIntersection(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number) {
+export function checkIntersection(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  x3: number,
+  y3: number,
+  x4: number,
+  y4: number
+) {
   const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
   const numeA = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
   const numeB = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
@@ -146,7 +170,8 @@ export function pointInPoly(polygon: Coord[], [y, x]: Coord) {
 
   let j = nvert - 1;
   for (let i = 0; i < nvert; j = i++) {
-    if (verty[i] > y != verty[j] > y && x < ((vertx[j] - vertx[i]) * (y - verty[i])) / (verty[j] - verty[i]) + vertx[i]) c = !c;
+    if (verty[i] > y != verty[j] > y && x < ((vertx[j] - vertx[i]) * (y - verty[i])) / (verty[j] - verty[i]) + vertx[i])
+      c = !c;
   }
   return c;
 }
@@ -175,4 +200,13 @@ export function* rotateIterator<T>(input: T[][]): IterableIterator<T[]> {
 
 export function pairWise<T>(a: T[]): [T, T][] {
   return a.flatMap((g, i) => a.slice(i + 1).map((other) => [g, other] as [T, T]));
+}
+
+export function groupNumber(xs: number[]): Record<number, number> {
+  return xs.reduce((groups, n) => {
+    let group = groups[n] ?? 0;
+    group++;
+    groups[n] = group;
+    return groups;
+  }, {} as Record<number, number>);
 }

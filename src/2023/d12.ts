@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 import { memoize, range } from '../util.js';
 
 export function run() {
@@ -36,7 +36,8 @@ function getCombinations(springs: string, [first, ...rest]: number[]): number {
   if (springs.length === 0 || first < 1 || springs.length < groups.sum() + groups.length - 1) return 0;
   if (springs.startsWith('.')) return memoized(springs.slice(1), groups);
   if (springs.startsWith('?')) return memoized(springs.slice(1), groups) + memoized(`#${springs.slice(1)}`, groups);
-  if (springs.slice(0, first).match(/^[#\?]*$/)) return springs.slice(first)[0] === '#' ? 0 : memoized(springs.slice(first + 1), rest);
+  if (springs.slice(0, first).match(/^[#\?]*$/))
+    return springs.slice(first)[0] === '#' ? 0 : memoized(springs.slice(first + 1), rest);
   return 0;
 }
 

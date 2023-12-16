@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 type Rule = {
   element: string;
   L: string;

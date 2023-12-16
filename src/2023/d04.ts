@@ -1,10 +1,15 @@
-import '../array.js';
+import 'array';
 import { range } from '../util.js';
 
 export function run() {
   const cards = realInput.split('\n').map((l, index) => {
     const [, winning, played] = l.split(/:|\|/);
-    return { scratched: false, index, winning: winning.trim().split(/\s+/).toNumbers(), played: played.trim().split(/\s+/).toNumbers() };
+    return {
+      scratched: false,
+      index,
+      winning: winning.trim().split(/\s+/).toNumbers(),
+      played: played.trim().split(/\s+/).toNumbers(),
+    };
   });
 
   // console.log(cards);
@@ -24,7 +29,10 @@ export function run() {
       .filter((c) => !c.scratched)
       .flatMap((c) => {
         c.scratched = true;
-        const won = range(c.index + 1, c.index + 1 + winsByCard[c.index], false).map((i) => ({ ...cards[i], scratched: false }));
+        const won = range(c.index + 1, c.index + 1 + winsByCard[c.index], false).map((i) => ({
+          ...cards[i],
+          scratched: false,
+        }));
         return won;
       });
     push(cards, cardsWon);

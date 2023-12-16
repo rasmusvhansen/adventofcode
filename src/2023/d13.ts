@@ -1,4 +1,4 @@
-import '../array.js';
+import 'array';
 import { pairWise, range, rotateIterator } from '../util.js';
 
 export function run() {
