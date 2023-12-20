@@ -1,5 +1,5 @@
 import 'array';
-import { pairWise, range, rotateIterator } from '../util.js';
+import { allPairs, range, rotateIterator } from '../util.js';
 
 export function run() {
   console.log('Day 13');
@@ -26,7 +26,7 @@ function findReflectionLine({ rows, columns }: { rows: number[]; columns: number
 }
 
 function findReflections(lines: number[], type: string) {
-  const pairs = pairWise(lines.map((value, index) => ({ value, index }))).filter(([a, b]) => a.value === b.value);
+  const pairs = allPairs(lines.map((value, index) => ({ value, index }))).filter(([a, b]) => a.value === b.value);
   const reflectionLines = pairs.filter(([a, b]) => Math.abs(a.index - b.index) === 1);
 
   return reflectionLines
@@ -47,7 +47,7 @@ const isBetween = (min: number, max: number) => (n: number) => n >= min && n <= 
 
 function findIndexAfterSmudge(lines: number[], type: string, index: number) {
   const linesAsNums = lines.map((l, index) => ({ value: l, index }));
-  const pairs = pairWise(linesAsNums).filter(([a, b]) => Math.abs(a.index - b.index) % 2 === 1);
+  const pairs = allPairs(linesAsNums).filter(([a, b]) => Math.abs(a.index - b.index) % 2 === 1);
 
   const fixedReflections1 = pairs
     .filter(([a, b]) => {

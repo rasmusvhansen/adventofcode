@@ -2,8 +2,11 @@ export const add = (a: number, b: number) => a + b;
 export const times = (a: number, b: number) => a * b;
 export const sum = (ns: number[]) => ns.reduce(add, 0);
 export const multiply = (ns: number[]) => ns.reduce(times, 1);
-export const range = (start: number, end: number, endInclusive = true) =>
-  Array.from({ length: end - start + (endInclusive ? 1 : 0) }).map((_, i) => i + start);
+export const range = (start: number, end: number, endInclusive = true) => {
+  const _start = Math.min(start, end);
+  const _end = Math.max(start, end);
+  return Array.from({ length: _end - _start + (endInclusive ? 1 : 0) }).map((_, i) => i + _start);
+};
 export const toMatrix = <T = number>(
   input: string,
   map: (s: string, row: number, col: number) => T = (s) => +s as T
@@ -45,6 +48,15 @@ export class Point {
   go(direction: Direction) {
     return Point.create(this.x + xTransform[direction], this.y + yTransform[direction]);
   }
+
+  add(p: Point): Point {
+    return Point.create(this.x + p.x, this.y + p.y);
+  }
+
+  subtract(p: Point): Point {
+    return Point.create(this.x - p.x, this.y + p.y);
+  }
+
   above(): Point {
     return Point.create(this.x, this.y - 1);
   }
@@ -117,6 +129,10 @@ export class Point {
 
   iswithinManhattanDistance(p: Point, distance: number): boolean {
     return manhattanDistance(this, p) <= distance;
+  }
+
+  toString() {
+    return `${this.x}, ${this.y}`;
   }
 }
 
@@ -198,8 +214,12 @@ export function* rotateIterator<T>(input: T[][]): IterableIterator<T[]> {
   }
 }
 
-export function pairWise<T>(a: T[]): [T, T][] {
+export function allPairs<T>(a: T[]): [T, T][] {
   return a.flatMap((g, i) => a.slice(i + 1).map((other) => [g, other] as [T, T]));
+}
+
+export function pairWise<T>(a: T[]): [T, T][] {
+  return a.slice(1).map((_, i) => [a[i], a[i + 1]]);
 }
 
 export function groupNumber(xs: number[]): Record<number, number> {
@@ -210,3 +230,32 @@ export function groupNumber(xs: number[]): Record<number, number> {
     return groups;
   }, {} as Record<number, number>);
 }
+
+/**
+ *
+ * @param polygon Right angle (manhattan) polygon
+ */
+export function circumference(polygon: Point[]): number {
+  return pairWise(polygon)
+    .map(([a, b]) => manhattanDistance(a, b))
+    .sum();
+}
+
+export function areaOfPolygon(polygon: Point[]) {
+  const nextPoint = (i: number) => polygon[(i + 1) % polygon.length];
+  return (
+    Math.abs(
+      polygon.uniq().reduce((area, p, i) => {
+        return area + (p.x * nextPoint(i).y - p.y * nextPoint(i).x);
+      }, 0)
+    ) / 2
+  );
+}
+
+export function join<T extends string[]>(...strings: T): Concat<T> {
+  return strings.join('') as Concat<T>;
+}
+
+export type Concat<T extends string[]> = T extends [infer F extends string, ...infer R extends string[]]
+  ? `${F}${Concat<R>}`
+  : '';
