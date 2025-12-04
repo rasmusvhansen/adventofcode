@@ -7,9 +7,9 @@ type Cell = '@' | '.';
 type Matrix = ReturnType<typeof toMatrix<Cell>>;
 
 let input = readFileSync(process.argv[2], 'utf-8').trim();
-console.log('Day x', process.argv[2]);
-
+console.log('Day 4', process.argv[2]);
 console.time('Solution');
+
 const grid = toMatrix<Cell>(input, (s) => s as Cell);
 
 let forkLiftAccessible = 0;
@@ -20,10 +20,9 @@ grid.forEach((cell, key) => {
   }
 });
 
-console.log({ forkLiftAccessible });
+console.log('Part 1: ', forkLiftAccessible);
 
-let cellsRemoved = 0;
-function removePaper(matrix: Matrix): Matrix {
+function removePaper(matrix: Matrix): number {
   const removableCellKeys: string[] = [];
   matrix.forEach((cell, key) => {
     if (cell === PAPER && grid.neighBours(...fromMatrixKey(key)).filter(([, , v]) => v === PAPER).length < 4) {
@@ -31,18 +30,16 @@ function removePaper(matrix: Matrix): Matrix {
     }
   });
   removableCellKeys.forEach((key) => matrix.set(key, '.'));
-  cellsRemoved = removableCellKeys.length;
-  return matrix;
+  return removableCellKeys.length;
 }
 
 let totalCellsRemoved = 0;
+let cellsRemoved = 0;
 do {
-  removePaper(grid);
+  cellsRemoved = removePaper(grid);
   totalCellsRemoved += cellsRemoved;
 } while (cellsRemoved > 0);
 
-console.log(totalCellsRemoved);
-
-//////////////////// SOLUTION goes here, run jaot or jaos
+console.log('Part 2: ', totalCellsRemoved);
 
 console.timeLog('Solution');
