@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import './array';
+import '../array';
 import { fromMatrixKey, toMatrix } from '../util';
 
 const PAPER = '@';
