@@ -16,6 +16,7 @@ export const toMatrix = <T = number>(
   rows.map((s, row) => s.split('').map((n, col) => matrix.set(matrixKey(row, col), map(n, row, col))));
   return {
     get: (row: number, col: number) => matrix.get(matrixKey(row, col)),
+    set: (key: string, value: T) => matrix.set(key, value),
     has: (row: number, col: number) => matrix.has(matrixKey(row, col)),
     forEach: matrix.forEach.bind(matrix) as Map<string, T>['forEach'],
     toArray() {
@@ -26,7 +27,36 @@ export const toMatrix = <T = number>(
     },
     height: rows.length,
     width: rows[0].length,
+    neighBours(row: number, col: number, direction?: FullDirection): [number, number, T][] {
+      if (direction) {
+        const p = Point.create(col, row).go(direction);
+        const value = this.get(p.y, p.x);
+        return value ? ([[p.y, p.x, value]] as const) : [];
+      }
+      return (
+        [
+          [row - 1, col - 1, this.get(row - 1, col - 1)],
+          [row - 1, col, this.get(row - 1, col)],
+          [row - 1, col + 1, this.get(row - 1, col + 1)],
+          [row, col + 1, this.get(row, col + 1)],
+          [row, col - 1, this.get(row, col - 1)],
+          [row + 1, col - 1, this.get(row + 1, col - 1)],
+          [row + 1, col, this.get(row + 1, col)],
+          [row + 1, col + 1, this.get(row + 1, col + 1)],
+        ] as const
+      ).filter(([, , v]) => v != null) as [number, number, T][];
+    },
   };
+};
+
+export const getDirection = (from: Point, to: Point): FullDirection => {
+  if (from.x === to.x) {
+    return from.y < to.y ? 'S' : 'N';
+  }
+  if (from.y === to.y) {
+    return from.x < to.x ? 'E' : 'W';
+  }
+  return from.x < to.x ? (from.y < to.y ? 'SE' : 'NE') : from.y < to.y ? 'SW' : 'NW';
 };
 
 export const matrixKey = (row: number, col: number) => `${row},${col}`;
@@ -34,8 +64,9 @@ export const fromMatrixKey = (key: string) => key.split(',').map((s) => +s) as [
 export type Rectangle = [Point, Point, Point, Point];
 
 export type Direction = 'N' | 'S' | 'E' | 'W';
-const xTransform: Record<Direction, -1 | 0 | 1> = { N: 0, S: 0, W: -1, E: 1 };
-const yTransform: Record<Direction, -1 | 0 | 1> = { N: -1, S: 1, W: 0, E: 0 };
+export type FullDirection = Direction | 'NW' | 'NE' | 'SW' | 'SE';
+const xTransform: Record<FullDirection, -1 | 0 | 1> = { N: 0, S: 0, W: -1, E: 1, NW: -1, NE: 1, SW: -1, SE: 1 };
+const yTransform: Record<FullDirection, -1 | 0 | 1> = { N: -1, S: 1, W: 0, E: 0, NW: -1, NE: -1, SW: 1, SE: 1 };
 export class Point {
   private static cache = new Map<string, Point>();
   static create(x: number, y: number) {
@@ -45,7 +76,7 @@ export class Point {
   }
 
   private constructor(public x: number, public y: number) {}
-  go(direction: Direction) {
+  go(direction: FullDirection) {
     return Point.create(this.x + xTransform[direction], this.y + yTransform[direction]);
   }
 

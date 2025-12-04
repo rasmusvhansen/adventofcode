@@ -1,10 +1,7 @@
 /// <reference path="./types/array.d.ts" />
 
 Array.prototype.sum = function (field) {
-  return this.map(field ? (o) => o[field] : (o) => o).reduce(
-    (sum, n) => sum + n,
-    0
-  );
+  return this.map(field ? (o) => o[field] : (o) => o).reduce((sum, n) => sum + n, 0);
 };
 
 Array.prototype.max = function (field) {
@@ -65,4 +62,12 @@ Array.prototype.chunk = function <T>(n: number) {
     groups[Math.floor(i / n)].push(rucksack);
     return groups;
   }, [] as T[][]);
+};
+
+Array.prototype.equals = function <T>(that: T[]) {
+  return this.length === that.length && this.every((e, i) => e === that[i]);
+};
+
+Array.prototype.removeIndex = function (index: number) {
+  return this.filter((_, i) => i !== index);
 };

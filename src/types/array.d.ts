@@ -17,5 +17,7 @@ declare global {
     union(that: T[]): T[];
     toNumbers(): number[];
     chunk(n: number): T[][];
+    equals(that: T[]): boolean;
+    removeIndex(index: number): T[];
   }
 }
