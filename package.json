@@ -21,10 +21,12 @@
   },
   "dependencies": {
     "@types/priorityqueuejs": "^1.0.1",
+    "cheerio": "^1.1.2",
     "nodemon": "^2.0.20",
     "priorityqueuejs": "^2.0.0",
     "rxjs": "^7.6.0",
-    "rxjs-transducer": "^1.1.1"
+    "rxjs-transducer": "^1.1.1",
+    "undici": "^7.16.0"
   },
   "prettier": {
     "singleQuote": true,
