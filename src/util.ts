@@ -18,6 +18,7 @@ export const toMatrix = <T = number>(
     get: (row: number, col: number) => matrix.get(matrixKey(row, col)),
     set: (key: string, value: T) => matrix.set(key, value),
     has: (row: number, col: number) => matrix.has(matrixKey(row, col)),
+    row: (n: number) => [...matrix.entries()].filter(([key, v]) => fromMatrixKey(key)[0] === n),
     forEach: matrix.forEach.bind(matrix) as Map<string, T>['forEach'],
     toArray() {
       return [...matrix.entries()];
@@ -45,6 +46,18 @@ export const toMatrix = <T = number>(
           [row + 1, col + 1, this.get(row + 1, col + 1)],
         ] as const
       ).filter(([, , v]) => v != null) as [number, number, T][];
+    },
+    toString() {
+      return range(0, rows.length)
+        .map((r) =>
+          this.row(r)
+            .map(([, v]) => v)
+            .join('')
+        )
+        .join('\n');
+    },
+    clone() {
+      return toMatrix(this.toString(), map);
     },
   };
 };
