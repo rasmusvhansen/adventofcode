@@ -296,6 +296,16 @@ export function areaOfPolygon(polygon: Point[]) {
   );
 }
 
+export type Point3D = [number, number, number];
+
+export function point3dKey([x, y, z]: Point3D) {
+  return `${x},${y},${z}`;
+}
+
+export function euclidianDistance([a1, a2, a3]: Point3D, [b1, b2, b3]: Point3D) {
+  return Math.sqrt((a1 - b1) ** 2 + (a2 - b2) ** 2 + (a3 - b3) ** 2);
+}
+
 export function join<T extends string[]>(...strings: T): Concat<T> {
   return strings.join('') as Concat<T>;
 }
