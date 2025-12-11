@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import '../array';
+import './array';
 import { memoize } from '@util';
 
 const input = readFileSync(process.argv[2], 'utf-8').trim();
@@ -22,12 +22,10 @@ const getPaths = memoize(function paths(from: string, to: string): number {
 
 console.log('PART 1', getPaths('you', 'out'));
 
-const pathsToFFT = getPaths('svr', 'fft');
-const pathsFFTDAC = getPaths('fft', 'dac');
-const pathsDACFFT = getPaths('dac', 'fft');
-const pathsDACOUT = getPaths('dac', 'out');
-const pathsFFTOUT = getPaths('fft', 'out');
-console.log('PART 2', { pathsToFFT, pathsDACFFT, pathsFFTDAC, pathsDACOUT, pathsFFTOUT });
-console.log('PART 2', pathsToFFT * pathsFFTDAC * pathsDACOUT);
+const pathCounts = [getPaths('svr', 'fft'), getPaths('fft', 'dac'), getPaths('dac', 'out')];
+console.log(
+  'PART 2',
+  pathCounts.map((c) => (c === 0 ? 1 : c)).reduce((product, n) => product * n)
+);
 
 console.timeLog('Solution');
