@@ -319,3 +319,26 @@ export function join<T extends string[]>(...strings: T): Concat<T> {
 export type Concat<T extends string[]> = T extends [infer F extends string, ...infer R extends string[]]
   ? `${F}${Concat<R>}`
   : '';
+
+export function combinationsInRange<T>(options: T[], minLength: number, maxLength: number): T[][] {
+  const result: T[][] = [];
+
+  function backtrack(startIndex: number, current: T[], targetLength: number) {
+    if (current.length === targetLength) {
+      result.push([...current]);
+      return;
+    }
+
+    for (let i = startIndex; i < options.length; i++) {
+      current.push(options[i]);
+      backtrack(i + 1, current, targetLength);
+      current.pop();
+    }
+  }
+
+  for (let len = minLength; len <= maxLength; len++) {
+    backtrack(0, [], len);
+  }
+
+  return result;
+}
