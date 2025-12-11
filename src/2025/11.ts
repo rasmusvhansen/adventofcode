@@ -3,7 +3,7 @@ import './array';
 import { memoize } from '@util';
 
 const input = readFileSync(process.argv[2], 'utf-8').trim();
-console.log('Day x', process.argv[2]);
+console.log('Day 11', process.argv[2]);
 console.time('Solution');
 
 const steps: Map<string, string[]> = new Map(
@@ -23,9 +23,6 @@ const getPaths = memoize(function paths(from: string, to: string): number {
 console.log('PART 1', getPaths('you', 'out'));
 
 const pathCounts = [getPaths('svr', 'fft'), getPaths('fft', 'dac'), getPaths('dac', 'out')];
-console.log(
-  'PART 2',
-  pathCounts.map((c) => (c === 0 ? 1 : c)).reduce((product, n) => product * n)
-);
-
+const totalPaths = pathCounts.reduce((p, n) => p * n);
+console.log('PART 2', totalPaths);
 console.timeLog('Solution');
