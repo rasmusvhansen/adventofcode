@@ -13,12 +13,9 @@ const steps: Map<string, string[]> = new Map(
   })
 );
 
-const getPaths = memoize(function paths(from: string, to: string): number {
-  if (from === to) return 1;
-  const children = steps.get(from);
-  if (!children?.length) return 0;
-  return children.map((c) => getPaths(c, to)).sum();
-});
+const getPaths = memoize((from: string, to: string): number =>
+  from === to ? 1 : (steps.get(from) ?? []).map((c) => getPaths(c, to)).sum()
+);
 
 console.log('PART 1', getPaths('you', 'out'));
 
